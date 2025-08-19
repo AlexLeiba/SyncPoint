@@ -15,19 +15,67 @@ datasource db {
 }
 
 
+// 
+// model User {
+//   id    Int     @id @default(autoincrement())
+//   email String  @unique
+//   name  String?
+//   posts Post[]
+// }
+// 
+// model Post {
+//   id        Int     @id @default(autoincrement())
+//   title     String
+//   content   String?
+//   published Boolean @default(false)
+//   authorId  Int
+//   author    User    @relation(fields: [authorId], references: [id])
+// }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+
+//CONTAIN DIFFERENT EVENT FOR PEOPL TO SCHEDULE, EACH EVENT HAS SCHEDULES ARRAY
+model Event {
+  id String @id @default(uuid())
+  userClerkId String
+
+  name String 
+  durationInMinutes Int
+
+  description String?
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime  @default(now())
+
+  schedules Schedule[] 
+
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id])
+
+// EACH SCHEDULE HAS EVENT ID (on which was created) AND SCHEDULE AVAILABILITIES ON THIS SCHEDULE table, PURPOSE: (sets up the timezone for user)
+model Schedule {
+  id String @id @default(uuid())
+  userClerkId String
+
+  timezone String
+  createdAt DateTime @default(now())
+  updatedAt DateTime  @default(now())
+
+  scheduleAvailabilities ScheduleAvailability[]
+
+  eventId String @default(uuid())
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+}
+
+
+// EACH SCHEDULE AVAILABILITIES HAS ITS SCHEDULE ID, WHEN STARTS, WHEN ENDS, WITH DAY OF THE WEEK (shows which are the time slots available for EACH INDIVIDUAL DAY)
+model ScheduleAvailability {
+  id String @id @default(uuid())
+  scheduleId String @default(uuid())
+  schedule Schedule @relation(fields: [scheduleId], references: [id],onDelete: Cascade) //this table will be deleted (schedule availability) if its Schedule id  is deleted ( so schedule wont exist anymore so the availability as well)
+  startTime String
+  endTime String
+  dayOfWeek Int // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
 }

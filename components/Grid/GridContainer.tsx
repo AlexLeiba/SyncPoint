@@ -15,12 +15,16 @@ const containerVariants = cva("w-full", {
       false: "max-w-5xl mx-auto px-4",
     },
   },
+  defaultVariants: {
+    fluid: false,
+    spacerY: "medium",
+  },
 });
 
 function GridContainer({
   children,
-  fluid = false,
-  spacerY = "medium",
+  fluid,
+  spacerY,
 }: {
   children: React.ReactNode;
   fluid?: boolean;
