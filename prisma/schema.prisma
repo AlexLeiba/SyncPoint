@@ -36,46 +36,89 @@ datasource db {
 //CONTAIN DIFFERENT EVENT FOR PEOPL TO SCHEDULE, EACH EVENT HAS SCHEDULES ARRAY
 model Event {
   id String @id @default(uuid())
-  userClerkId String
 
-  name String 
+  title String 
+  description String?
+
   durationInMinutes Int
 
-  description String?
+  userClerkId String
+
   isActive Boolean @default(true)
+  meetings Meeting[] //bookings
 
   createdAt DateTime @default(now())
   updatedAt DateTime  @default(now())
 
-  schedules Schedule[] 
 
 }
 
 
 // EACH SCHEDULE HAS EVENT ID (on which was created) AND SCHEDULE AVAILABILITIES ON THIS SCHEDULE table, PURPOSE: (sets up the timezone for user)
-model Schedule {
+model Meeting {
   id String @id @default(uuid())
+  eventId String @default(uuid())
+
   userClerkId String
 
-  timezone String
-  createdAt DateTime @default(now())
-  updatedAt DateTime  @default(now())
+  name String
+  email String
+  additionalInfo String?
 
-  scheduleAvailabilities ScheduleAvailability[]
+  startTime DateTime
+  endTime DateTime
 
-  eventId String @default(uuid())
+  meetLink String
+  googleEventId String
+
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime  @updatedAt
+
+
+
+
+  // 
+  availability Availability[]
 
 }
 
 
 // EACH SCHEDULE AVAILABILITIES HAS ITS SCHEDULE ID, WHEN STARTS, WHEN ENDS, WITH DAY OF THE WEEK (shows which are the time slots available for EACH INDIVIDUAL DAY)
-model ScheduleAvailability {
+model Availability {
   id String @id @default(uuid())
-  scheduleId String @default(uuid())
-  schedule Schedule @relation(fields: [scheduleId], references: [id],onDelete: Cascade) //this table will be deleted (schedule availability) if its Schedule id  is deleted ( so schedule wont exist anymore so the availability as well)
-  startTime String
-  endTime String
-  dayOfWeek Int // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
+  userClerkId String
+
+  meetingId String @default(uuid())
+  meetings Meeting @relation(fields: [meetingId], references: [id],onDelete: Cascade) //this table will be deleted (schedule availability) if its Schedule id  is deleted ( so schedule wont exist anymore so the availability as well)
+  timeGap Int
+
+  daysAvailableId String 
+
+  days DaysAvailable []
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime  @updatedAt
+
+}
+
+model DaysAvailable {
+  id String @id @default(uuid())
+  availabilityId String
+  day DayOfWeek
+  startTime DateTime //TO SPECIFY WHAT start and end time for a particular day
+  endTime DateTime
+  availability  Availability @relation(fields: [availabilityId],references: [id],onDelete: Cascade)
+}
+
+enum DayOfWeek {
+MONDAY
+TUESDAY
+WEDNESDAY
+THURSDAY
+FRIDAY
+SATURDAY
+SUNDAY
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prismaClient";
+import { prismaDB } from "@/lib/prismaClient";
 import { newEventSchema, NewEventSchemaType } from "@/lib/zodSchemas";
 import { auth } from "@clerk/nextjs/server";
 
@@ -13,10 +13,10 @@ export async function createEvent(unsafeData: NewEventSchemaType) {
     return { error: true, data: null };
   }
 
-  const event = await prisma.event.create({
+  const event = await prismaDB.event.create({
     data: {
       userClerkId: userId,
-      name: safeData.name,
+      title: safeData.title,
       description: safeData.description,
       durationInMinutes: safeData.durationInMinutes,
       isActive: safeData.isActive,
@@ -42,11 +42,11 @@ export async function editEvent(
     return { error: true, data: null };
   }
 
-  const event = await prisma.event.update({
+  const event = await prismaDB.event.update({
     where: { id: eventId, userClerkId: userId },
     data: {
       userClerkId: userId,
-      name: safeData.name,
+      title: safeData.title,
       description: safeData.description,
       durationInMinutes: safeData.durationInMinutes,
       isActive: safeData.isActive,
@@ -67,7 +67,7 @@ export async function deleteEvent(eventId: string) {
     return { error: true, data: null };
   }
 
-  const event = await prisma.event.delete({
+  const event = await prismaDB.event.delete({
     where: { id: eventId, userClerkId: userId },
   });
 

@@ -1,7 +1,7 @@
 import GridContainer from "@/components/Grid/GridContainer";
 import EventCard from "@/components/Pages/Events/EventCard";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/lib/prismaClient";
+import { prismaDB } from "@/lib/prismaClient";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { CalendarPlus } from "lucide-react";
@@ -15,7 +15,7 @@ async function EventsPage() {
   if (userData.userId === null) {
     return <RedirectToSignIn />;
   }
-  const events = await prisma.event.findMany({
+  const events = await prismaDB.event.findMany({
     where: {
       userClerkId: userData.userId,
       // isActive: true, TODO check where to keep all events which arent active
@@ -28,8 +28,8 @@ async function EventsPage() {
   return (
     <GridContainer>
       <div className="flex justify-between">
-        <h2>Events</h2>
-        <Button asChild size={"lg"}>
+        <h2 className="gradient-title">Events</h2>
+        <Button asChild size={"lg"} variant={"primary"}>
           <Link href="/events/new-event">
             <CalendarPlus /> New Event
           </Link>

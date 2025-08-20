@@ -1,5 +1,10 @@
 "use client";
-import { newEventSchema, NewEventSchemaType } from "@/lib/zodSchemas";
+import {
+  newEventSchema,
+  NewEventSchemaType,
+  newScheduleSchema,
+  NewScheduleSchemaType,
+} from "@/lib/zodSchemas";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,20 +25,24 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { createEvent } from "@/server-actions/events";
 import { redirect } from "next/navigation";
+import { DAYS_OF_WEEK } from "@/consts";
 
-export function NewEventForm() {
+type AvailabilityType = {
+  startTime: string;
+  endTime: string;
+  dayOfWeek: (typeof DAYS_OF_WEEK)[number];
+};
+export function SchedulesForm() {
   const [saving, setSaving] = useState(false);
-  const formMethods = useForm<NewEventSchemaType>({
-    resolver: zodResolver(newEventSchema),
+  const formMethods = useForm<NewScheduleSchemaType>({
+    resolver: zodResolver(newScheduleSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      durationInMinutes: 30,
-      isActive: true,
+      timezone: "",
+      availabilities: [{ startTime: "", endTime: "", dayOfWeek: "monday" }],
     },
   });
 
-  async function onSubmit(data: NewEventSchemaType) {
+  async function onSubmit(data: NewScheduleSchemaType) {
     setSaving(true);
     const response = await createEvent(data);
 
@@ -57,16 +66,16 @@ export function NewEventForm() {
       >
         <FormField
           control={formMethods.control}
-          name="title"
+          name="name"
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
                 <FormDescription>
-                  The title users will see when booking this event.
+                  The name users will see when booking this event.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -149,7 +158,7 @@ export function NewEventForm() {
             </Button>
           </Link>
           <Button size={"lg"} type="submit" disabled={saving}>
-            Create Event
+            Create Schedule
           </Button>
         </div>
       </form>

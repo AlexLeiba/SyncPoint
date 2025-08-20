@@ -12,15 +12,10 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono", //here we create a variable for this font
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "SyncPoint",
   description:
-    "SyncPoint is a Calendly clone built with Next.js, Clerk, and Tailwind CSS.",
+    "SyncPoint is a Calendly clone built with Next.js, Clerk, Prisma and Tailwind CSS.",
 };
 
 export default function RootLayout({
@@ -34,7 +29,7 @@ export default function RootLayout({
       <html lang="en">
         <body
           className={cn(
-            `${geistSans.variable} ${geistMono.variable} antialiased min-h-[calc(100vh-61px)] flex flex-col mt-[61px]`
+            `${geistSans.variable}  antialiased min-h-[calc(100vh-61px)] flex flex-col mt-[61px]`
           )}
         >
           <Header />

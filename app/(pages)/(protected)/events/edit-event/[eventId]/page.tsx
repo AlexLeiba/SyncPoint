@@ -1,7 +1,7 @@
 import GridContainer from "@/components/Grid/GridContainer";
 import { EditEventForm } from "@/components/Pages/Events/EditEventForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { prisma } from "@/lib/prismaClient";
+import { prismaDB } from "@/lib/prismaClient";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import React from "react";
 
@@ -10,7 +10,7 @@ async function EditEventPage({ params }: { params: { eventId: string } }) {
   if (!eventIdParam) {
     return <RedirectToSignIn />;
   }
-  const eventData = await prisma.event.findUnique({
+  const eventData = await prismaDB.event.findUnique({
     where: { id: eventIdParam },
   });
   if (!eventData) return <RedirectToSignIn />;

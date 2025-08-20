@@ -118,7 +118,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans);
   }
+}
+.gradient-title {
+  @apply bg-gradient-to-br from-green-800 to-green-400 bg-clip-text tracking-tighter text-transparent;
 }
 
 @media (min-width: 576px) {

@@ -31,7 +31,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { set } from "zod";
 import { X } from "lucide-react";
 
 type Props = {
@@ -42,7 +41,7 @@ export function EditEventForm({ eventData }: Props) {
   const formMethods = useForm<NewEventSchemaType>({
     resolver: zodResolver(newEventSchema),
     defaultValues: {
-      name: eventData?.name || "",
+      title: eventData?.title || "",
       description: eventData?.description || "",
       durationInMinutes: eventData?.durationInMinutes || 30,
       isActive: eventData?.isActive || true,
@@ -95,16 +94,16 @@ export function EditEventForm({ eventData }: Props) {
       >
         <FormField
           control={formMethods.control}
-          name="name"
+          name="title"
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
                 <FormDescription>
-                  The name users will see when booking this event.
+                  The title users will see when booking this event.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

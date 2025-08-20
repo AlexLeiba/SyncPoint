@@ -16,7 +16,7 @@ import { CopyEventLink } from "./CopyEventLink";
 import { cn } from "@/lib/utils";
 
 function EventCard({
-  data: { name, description, durationInMinutes, id, userClerkId, isActive },
+  data: { title, description, durationInMinutes, id, userClerkId, isActive },
 }: {
   data: Event;
 }) {
@@ -26,7 +26,7 @@ function EventCard({
         <CardTitle
           className={cn(!isActive && "text-foreground/50", "text-3xl")}
         >
-          {name}
+          {title}
         </CardTitle>
         <CardDescription>
           {formatDurationInMinutes(durationInMinutes)}

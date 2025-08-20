@@ -12,7 +12,7 @@ const containerVariants = cva("w-full", {
     },
     fluid: {
       true: "px-0",
-      false: "max-w-5xl mx-auto px-4",
+      false: "max-w-5xl mx-auto pr-4 pl-4 md:pr-4 md:pl-16",
     },
   },
   defaultVariants: {

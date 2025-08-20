@@ -1,7 +1,7 @@
 import { DAYS_OF_WEEK } from "@/consts";
 import * as z from "zod";
 export const newEventSchema = z.object({
-  name: z.string().min(1, "Required"),
+  title: z.string().min(1, "Required").max(100),
   description: z.string().optional(),
   isActive: z.boolean(),
   durationInMinutes: z
@@ -40,3 +40,15 @@ export const newScheduleSchema = z
   });
 
 export type NewScheduleSchemaType = z.infer<typeof newScheduleSchema>;
+
+export const usernameSchema = z.object({
+  username: z
+    .string()
+    .min(1, "Required")
+    .max(20)
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    ),
+});
+export type UsernameSchemaType = z.infer<typeof usernameSchema>;
