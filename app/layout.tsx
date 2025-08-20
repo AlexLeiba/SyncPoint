@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/components/Navigations/Header";
 import { Footer } from "@/components/Navigations/Footer";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans", //here we create a variable for this font
@@ -29,6 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
+      <Toaster />
       <html lang="en">
         <body
           className={cn(
@@ -36,7 +38,9 @@ export default function RootLayout({
           )}
         >
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow bg-background  text-foreground">
+            {children}
+          </main>
           <Footer />
         </body>
       </html>

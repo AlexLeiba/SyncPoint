@@ -4,7 +4,7 @@ import { Logo } from "./Logo";
 
 export function Footer() {
   return (
-    <div className="bg-accent ">
+    <footer className="bg-accent ">
       <GridContainer spacerY="small">
         <div className="flex justify-between items-center">
           <Logo />
@@ -12,6 +12,6 @@ export function Footer() {
           <p className="text-lg">Contact</p>
         </div>
       </GridContainer>
-    </div>
+    </footer>
   );
 }
