@@ -11,7 +11,11 @@ function UserData() {
 
   const [copy, setCopy] = useState(false);
 
-  const bookingLink = user ? `${location.origin}/book/${user?.id}` : "";
+  const bookingLink = user
+    ? `${location.origin}/book/${user?.fullName?.trim().replace(" ", "-")}/${
+        user?.id
+      }`
+    : "";
 
   function handleCopyLink() {
     window?.navigator.clipboard.writeText(bookingLink).then(() => {

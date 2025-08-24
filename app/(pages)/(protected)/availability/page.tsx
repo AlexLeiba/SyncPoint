@@ -1,10 +1,14 @@
 import GridContainer from "@/components/Grid/GridContainer";
+import { AvailabilityForm } from "@/components/Pages/Availability/AvailabilityForm";
 import { Button } from "@/components/ui/button";
+import { getAvailability } from "@/server-actions/availability";
 import { CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-function AvailabilityPage() {
+async function AvailabilityPage() {
+  const availabilityData = await getAvailability();
+
   return (
     <GridContainer>
       <div className="flex justify-between">
@@ -15,6 +19,9 @@ function AvailabilityPage() {
           </Link>
         </Button>
       </div>
+      <div className="w-full h-px bg-muted-foreground my-8"></div>
+
+      {availabilityData.data && <AvailabilityForm {...availabilityData.data} />}
     </GridContainer>
   );
 }

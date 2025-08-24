@@ -43,6 +43,9 @@ model Event {
   durationInMinutes Int
 
   userClerkId String
+  userImage String
+  userEmail String
+  userFullName String
 
   isActive Boolean @default(true)
   meetings Meeting[] //bookings
@@ -80,7 +83,7 @@ model Meeting {
 
 
   // 
-  availability Availability[]
+  // availability Availability[]
 
 }
 
@@ -91,13 +94,14 @@ model Availability {
 
   userClerkId String
 
-  meetingId String @default(uuid())
-  meetings Meeting @relation(fields: [meetingId], references: [id],onDelete: Cascade) //this table will be deleted (schedule availability) if its Schedule id  is deleted ( so schedule wont exist anymore so the availability as well)
+  // meetingId String
+  // meetings Meeting @relation(fields: [meetingId], references: [id],onDelete: Cascade) //this table will be deleted (schedule availability) if its Schedule id  is deleted ( so schedule wont exist anymore so the availability as well)
   timeGap Int
 
-  daysAvailableId String 
+  // daysAvailableId String 
 
-  days DaysAvailable []
+
+days DaysAvailable[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime  @updatedAt
@@ -105,14 +109,14 @@ model Availability {
 }
 
 model DaysAvailable {
-  id String @id @default(uuid())
-  availabilityId String
-  day DayOfWeek
-  startTime DateTime //TO SPECIFY WHAT start and end time for a particular day
-  endTime DateTime
-  availability  Availability @relation(fields: [availabilityId],references: [id],onDelete: Cascade)
-}
+  id             String       @id @default(uuid())
+  availabilityId String       // foreign key
+  day            DayOfWeek
+  startTime      DateTime
+  endTime        DateTime
 
+  availability   Availability @relation(fields: [availabilityId], references: [id], onDelete: Cascade)
+}
 enum DayOfWeek {
 MONDAY
 TUESDAY

@@ -24,7 +24,7 @@ async function EventsPage() {
       updatedAt: "desc",
     },
   });
-  console.log("🚀 ~ EventsPage ~ events:", events);
+
   return (
     <GridContainer>
       <div className="flex justify-between">

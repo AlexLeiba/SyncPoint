@@ -52,3 +52,52 @@ export const usernameSchema = z.object({
     ),
 });
 export type UsernameSchemaType = z.infer<typeof usernameSchema>;
+
+const dayOfTheWeekSchema = z
+  .object({
+    isAvailable: z.boolean().optional(),
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.isAvailable && data.startTime && data.endTime) {
+        return data.startTime < data.endTime;
+      }
+
+      return true;
+    },
+    {
+      message: "Start Time must be before End Time",
+      path: ["startTime"],
+    }
+  );
+
+export const availabilitySchema = z.object({
+  monday: dayOfTheWeekSchema,
+  tuesday: dayOfTheWeekSchema,
+  wednesday: dayOfTheWeekSchema,
+  thursday: dayOfTheWeekSchema,
+  friday: dayOfTheWeekSchema,
+  saturday: dayOfTheWeekSchema,
+  sunday: dayOfTheWeekSchema,
+  timeGap: z.number().min(0, "Time Gap must be 0 or more minutes"),
+});
+
+export type AvailabilitySchemaType = z.infer<typeof availabilitySchema>;
+
+export const meetingSchema = z.object({
+  name: z.string().min(1, "Required"),
+  email: z.email("Invalid email").min(1, "Required"),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format")
+    .min(1, "Required"),
+  time: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, "Invalid time format")
+    .min(1, "Required"),
+  additionalInfo: z.string().optional(),
+});
+
+export type MeetingSchemaType = z.infer<typeof meetingSchema>;

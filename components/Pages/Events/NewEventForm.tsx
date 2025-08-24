@@ -20,8 +20,10 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { createEvent } from "@/server-actions/events";
 import { redirect } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export function NewEventForm() {
+  const { user } = useUser();
   const [saving, setSaving] = useState(false);
   const formMethods = useForm<NewEventSchemaType>({
     resolver: zodResolver(newEventSchema),
@@ -35,7 +37,23 @@ export function NewEventForm() {
 
   async function onSubmit(data: NewEventSchemaType) {
     setSaving(true);
-    const response = await createEvent(data);
+
+    if (!user) return toast.error("No user data was found. Please try again.");
+    const userData = {
+      userClerkId: user.id,
+      userImage: user.imageUrl,
+      userEmail: user.emailAddresses[0].emailAddress,
+      userFullName: user.fullName,
+    };
+    if (
+      !userData.userClerkId ||
+      !userData.userFullName ||
+      !userData.userEmail ||
+      !userData.userImage
+    ) {
+      return toast.error("No user data was found. Please try again.");
+    }
+    const response = await createEvent(data, userData);
 
     if (response.error) {
       formMethods.reset();

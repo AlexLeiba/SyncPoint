@@ -4,7 +4,17 @@ import { prismaDB } from "@/lib/prismaClient";
 import { newEventSchema, NewEventSchemaType } from "@/lib/zodSchemas";
 import { auth } from "@clerk/nextjs/server";
 
-export async function createEvent(unsafeData: NewEventSchemaType) {
+type UserDataType = {
+  userClerkId: string;
+  userImage: string;
+  userEmail: string;
+  userFullName: string | null;
+};
+
+export async function createEvent(
+  unsafeData: NewEventSchemaType,
+  userData: UserDataType
+) {
   const { userId } = await auth();
 
   const { data: safeData, success } = newEventSchema.safeParse(unsafeData);
@@ -15,11 +25,12 @@ export async function createEvent(unsafeData: NewEventSchemaType) {
 
   const event = await prismaDB.event.create({
     data: {
-      userClerkId: userId,
       title: safeData.title,
       description: safeData.description,
       durationInMinutes: safeData.durationInMinutes,
       isActive: safeData.isActive,
+      ...userData,
+      userFullName: userData.userFullName || "User Name",
     },
   });
 

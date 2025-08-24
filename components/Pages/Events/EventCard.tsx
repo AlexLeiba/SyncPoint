@@ -21,10 +21,13 @@ function EventCard({
   data: Event;
 }) {
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-64">
       <CardHeader>
         <CardTitle
-          className={cn(!isActive && "text-foreground/50", "text-3xl")}
+          className={cn(
+            !isActive && "text-foreground/50",
+            "text-3xl line-clamp-1"
+          )}
         >
           {title}
         </CardTitle>
@@ -34,7 +37,9 @@ function EventCard({
       </CardHeader>
       {description && (
         <CardContent className={cn(!isActive && "text-foreground/50")}>
-          {description}
+          <CardDescription className="text-foreground line-clamp-4">
+            {description}
+          </CardDescription>
         </CardContent>
       )}
       <CardFooter className="flex justify-end gap-2">
