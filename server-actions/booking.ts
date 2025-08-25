@@ -1,6 +1,6 @@
 "use server";
 
-import { Availability, Meeting } from "@/app/generated/prisma";
+import { Meeting } from "@/app/generated/prisma";
 import { prismaDB } from "@/lib/prismaClient";
 import { auth } from "@clerk/nextjs/server";
 
@@ -14,7 +14,8 @@ import {
   parseISO,
   startOfDay,
 } from "date-fns";
-import { meetingSchema, MeetingSchemaType } from "@/lib/zodSchemas";
+import { google } from "googleapis";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export type DataSlotsType = {
   date: string;
@@ -30,7 +31,7 @@ export async function getEventAvailability(
   const { userId } = await auth();
 
   if (!eventOwnerId || !eventId || !userId) {
-    console.log("ERROR", "No user or event id");
+    console.log("ERROR", "No user or event id ");
     return {
       error: true,
       data: null,
@@ -65,7 +66,7 @@ export async function getEventAvailability(
     },
   });
 
-  if (!eventData || availability.length === 0) {
+  if (!eventData) {
     console.log("ERROR", "No event or availability");
 
     return {
@@ -75,20 +76,16 @@ export async function getEventAvailability(
   }
 
   //   CALC USER SLOTS WITH AVAILABLE TIME ON EACH SELECTED SLOT
-  const startDate = startOfDay(new Date()).getTime(); // the 00:00 of today in local timezone TODO: check why returns 21:00
-  const endDate = addDays(startDate, 30).getTime(); // adds 30 days to the start date
+  const startDate = startOfDay(new Date()); // the 00:00 of today in local timezone TODO: check why returns 21:00
+  const endDate = addDays(startDate, 30); // adds 30 days to the start date
 
   const availableDays: DataSlotsType = [];
 
   //   Creating day slots for 30 days
   // Will iterate until the current date reaches 30 days
-  for (
-    let date = startDate;
-    date <= endDate;
-    date = addDays(date, 1).getTime()
-  ) {
+  for (let date = startDate; date <= endDate; date = addDays(date, 1)) {
     const dayOfWeek = format(date, "EEEE").toUpperCase() as DayOfWeekUpperCase;
-    const dayAvailable = availability[0].days.find(
+    const dayAvailable = availability[0]?.days.find(
       (day) => day.day === dayOfWeek
     ); //User is available on that day
     // Generate all time slots on calendar where user is available with from to hours on each day slot
@@ -185,6 +182,7 @@ function generateAvailableTimeSlots({
     });
 
     if (!isSlotAlreadyTakenForAParticularTime) {
+      // if slot is not taken then push this free slot
       slots.push(format(currentTimeOfAvailableDay, "HH:mm"));
     }
 
@@ -202,43 +200,116 @@ function generateAvailableTimeSlots({
 }
 
 export type BookAMeetingType = {
-  startTime: Date;
-  endTime: Date;
+  startTime: string;
+  endTime: string;
   name: string;
   email: string;
   additionalInfo: string;
   eventId: string;
+  clerkUserId: string;
 };
-export async function bookAMeeting(data: BookAMeetingType) {
+export async function bookAMeeting(bookData: BookAMeetingType) {
   const { userId } = await auth(); //for userClerkId
 
-  if (!userId) {
+  const { data } = await (
+    await clerkClient()
+  ).users.getUserOauthAccessToken(bookData.clerkUserId, "google");
+
+  const token = data[0]?.token;
+
+  try {
+    if (!userId || !token) {
+      throw new Error("User not found");
+    }
+
+    const event = await prismaDB.event.findUnique({
+      where: { id: bookData.eventId }, //the event user wants to make a book
+    });
+
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    // use google calenday api to generate meet link and add to calendar
+
+    const oAuthClientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET;
+
+    if (!oAuthClientSecret) {
+      throw new Error("Client secret not found");
+    }
+
+    // Set up Google OAuth Client
+    const oAuth2Client = new google.auth.OAuth2();
+
+    oAuth2Client.setCredentials({
+      access_token: token,
+    });
+
+    const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
+
+    const meetResponse = await calendar.events.insert({
+      auth: oAuth2Client,
+      calendarId: "primary",
+      conferenceDataVersion: 1,
+
+      requestBody: {
+        //the body of the event saved in goole calendar
+        summary: `${bookData.name} - ${event.title}`,
+        description: bookData.additionalInfo,
+        start: {
+          dateTime: bookData.startTime,
+        },
+        end: {
+          dateTime: bookData.endTime,
+        },
+        attendees: [
+          {
+            email: bookData.email,
+          },
+          {
+            email: event.userEmail,
+          },
+        ],
+        conferenceData: {
+          //required for generating ID of the event
+          createRequest: {
+            requestId: `${event.id}-${bookData.startTime}-${bookData.endTime}`,
+            conferenceSolutionKey: {
+              type: "hangoutsMeet",
+            },
+          },
+        },
+      },
+    });
+
+    const meetLink = meetResponse.data.hangoutLink;
+    const googleEventId = meetResponse.data.id;
+
+    if (!meetLink || !googleEventId) {
+      throw new Error("Failed to book a meeting. Please try again.");
+    }
+
+    const response = await prismaDB.meeting.create({
+      data: {
+        startTime: bookData.startTime,
+        endTime: bookData.endTime,
+        userClerkId: bookData.clerkUserId, //user who created the booking
+        name: bookData.name,
+        email: bookData.email,
+        additionalInfo: bookData.additionalInfo ? bookData.additionalInfo : "",
+        eventId: bookData.eventId,
+        meetLink: meetLink, //to get the meeting when is
+        googleEventId: googleEventId,
+      },
+    });
+
+    if (!response) {
+      throw new Error("Failed to book a meeting. Please try again.");
+    }
+
+    return { error: false, data: response };
+  } catch (error) {
+    console.log("ERROR booking a meet", error);
     return { error: true, data: null };
   }
-
-  const event = await prismaDB.event.findUnique({
-    where: { id: data.eventId },
-  });
-
-  if (!event) return { error: true, data: null };
-
-  // use google calenday api to generate meet link and add to calendar
-
-  const response = await prismaDB.meeting.create({
-    data: {
-      startTime: data.startTime,
-      endTime: data.endTime,
-      userClerkId: userId, //user who created the booking
-      name: data.name,
-      email: data.email,
-      additionalInfo: data.additionalInfo ? data.additionalInfo : "",
-      eventId: data.eventId,
-      meetLink: "",
-      googleEventId: "",
-    },
-  });
-
-  if (!response) return { error: true, data: null };
-
-  return { error: false, data: response };
 }

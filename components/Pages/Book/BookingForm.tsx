@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Event } from "@/app/generated/prisma";
+import { Event, Meeting } from "@/app/generated/prisma";
 import { meetingSchema, type MeetingSchemaType } from "@/lib/zodSchemas";
 import {
   bookAMeeting,
@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { format } from "date-fns";
+import Link from "next/link";
 type Props = {
   availableDays: DataSlotsType;
   error: boolean;
@@ -28,10 +29,10 @@ type Props = {
 export function BookingForm({ availableDays, event, error }: Props) {
   const [selectedDay, setSelectedDay] = useState<Date | undefined>();
   const [selectedMonth, setSelectedMonth] = useState<Date | undefined>();
-  const [selectTime, setSelectedTime] = useState<string>("");
+  // const [selectTime, setSelectedTime] = useState<string>("");
   const [slots, setSlots] = useState<string[]>([]);
-
-  console.log("🚀 ~ EventDetails ~ availableDays:", availableDays);
+  const [loading, setLoading] = useState(false);
+  const [bookedData, setBookedData] = useState<Meeting>();
 
   if (error) {
     toast.error("Failed to load event. Please try again.");
@@ -43,7 +44,6 @@ export function BookingForm({ availableDays, event, error }: Props) {
   });
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
     setValue,
@@ -52,28 +52,38 @@ export function BookingForm({ availableDays, event, error }: Props) {
   } = formMethods;
 
   async function onSubmit(data: MeetingSchemaType) {
-    console.log("data", data);
+    setLoading(true);
+    toast.loading("Booking a meeting...", { id: "booking" });
+    console.log("data SUBMIT", data);
 
     const startTime = `${data.date}T${data.time}:00.000Z`;
-    const endTime = `${data.date}T${data.time}:00.000Z`;
+
+    const endTime =
+      new Date(startTime).getTime() + event.durationInMinutes * 60 * 1000;
 
     const bookData: BookAMeetingType = {
       additionalInfo: data.additionalInfo ? data.additionalInfo : "",
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
+      startTime: new Date(startTime).toISOString(),
+      endTime: new Date(endTime).toISOString(),
       name: data.name,
       email: data.email,
       eventId: event.id,
+      clerkUserId: event.userClerkId,
     };
-    console.log("🚀 ~ onSubmit ~ bookData:", bookData);
-    //     const response = await bookAMeeting(bookData);
-    //
-    //     if (response.error) {
-    //       toast.error("Failed to book a meeting. Please try again.");
-    //     }
 
-    //    const startTime =;
-    // const endTime = ;
+    const response = await bookAMeeting(bookData);
+
+    if (response.error) {
+      setLoading(false);
+      toast.dismiss("booking");
+      toast.error("Failed to book a meeting. Please try again.");
+    }
+
+    toast.success("Meeting booked successfully!");
+    toast.dismiss("booking");
+    setLoading(false);
+
+    response.data && setBookedData(response.data);
   }
 
   function handleMonthChange(month: Date) {
@@ -94,7 +104,7 @@ export function BookingForm({ availableDays, event, error }: Props) {
 
       setSlots(filteredSlots[0]?.slots || []);
     }
-  }, [selectedDay]);
+  }, [selectedDay, availableDays]);
 
   function handleSelectTimeSlot(startTime: string) {
     if (selectedDay) {
@@ -102,16 +112,46 @@ export function BookingForm({ availableDays, event, error }: Props) {
     }
     if (startTime) {
       setValue("time", startTime);
-      setSelectedTime(startTime);
     }
   }
 
+  function handleBookANewMeet() {
+    reset();
+    setBookedData(undefined);
+  }
+
+  if (bookedData) {
+    return (
+      <div className="flex flex-col justify-between">
+        <div className="flex flex-col gap-2 items-center justify-center">
+          <p className="text-2xl font-bold">Meeting Booked!</p>
+          <p className="text-lg">Thank you for booking a meeting with us.</p>
+          <p className="text-lg">
+            You will receive all informations on your email!
+          </p>
+
+          <div className="flex gap-2 items-center">
+            <p>Join the meeting:</p>
+            <Link
+              href={bookedData.meetLink}
+              target="_blank"
+              title="Join Meeting"
+            >
+              <p className="text-green-600 underline">{bookedData.meetLink}</p>
+            </Link>
+          </div>
+        </div>
+        <Button onClick={handleBookANewMeet}>Book a new meeting</Button>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <div className="flex gap-4 ">
+    <div className="border-l border-gray-300 pl-6">
+      <div className="flex gap-4  ">
         <div>
-          {" "}
           <DayPicker
+            className="rdp-day_button-[border:none]"
             disabled={[
               {
                 before: new Date(),
@@ -126,13 +166,20 @@ export function BookingForm({ availableDays, event, error }: Props) {
             selected={selectedDay}
             onSelect={handleSelectDay}
             modifiers={{
-              available: availableDays?.map((day) => new Date(day.date)),
+              available: availableDays?.map((day) => new Date(day.date)), //inside modifiers : is as if defined a variable ('available' in this case) with which we can tell what cells to highlight. ITS added to a day when 'day' matches specific conditions.
+              selected: selectedDay ? [selectedDay] : [],
             }}
             modifiersStyles={{
               available: {
+                //and here related to value (defined in matchers) which represents this variable (available,selected) we can style it.
                 color: "black",
-                backgroundColor: "lightgray",
+                backgroundColor: "rgb(185, 237, 192)", //for each cell that are available in array 'availableDays' will add this style.
                 borderRadius: "50%",
+              },
+              selected: {
+                color: "white",
+                backgroundColor: "rgb(33, 123, 46)",
+                borderRadius: "100%",
               },
             }}
           />
@@ -168,7 +215,7 @@ export function BookingForm({ availableDays, event, error }: Props) {
         <Form {...formMethods}>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="w-full flex flex-col gap-2 mt-4"
+            className="w-full flex flex-col gap-2 mt-4 "
           >
             <label htmlFor="name">Your Name*</label>
             <Input
@@ -203,7 +250,12 @@ export function BookingForm({ availableDays, event, error }: Props) {
               </p>
             )}
 
-            <Button size={"lg"} type="submit" className="w-full">
+            <Button
+              disabled={loading}
+              size={"lg"}
+              type="submit"
+              className="w-full"
+            >
               Book event
             </Button>
           </form>

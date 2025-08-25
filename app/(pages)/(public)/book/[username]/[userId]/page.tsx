@@ -4,7 +4,6 @@ import { EventsCards } from "@/components/Pages/Book/EventsCards";
 import { UserData } from "@/components/Pages/Book/UserData";
 import { Spacer } from "@/components/ui/spacer";
 import { prismaDB } from "@/lib/prismaClient";
-import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata() {
@@ -44,8 +43,8 @@ async function BookEventPage({
     },
   });
   const userData = {
-    userFullName: eventsData[0].userFullName,
-    userImage: eventsData[0].userImage,
+    userFullName: eventsData[0]?.userFullName,
+    userImage: eventsData[0]?.userImage,
   };
   return (
     <GridContainer>

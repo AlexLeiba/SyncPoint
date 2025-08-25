@@ -1,12 +1,17 @@
 import GridContainer from "@/components/Grid/GridContainer";
-import { SchedulesForm } from "@/components/Pages/Schedules/SchedulesForm";
+import { MeetingsList } from "@/components/Pages/Meetings/MeetingsList";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prismaDB } from "@/lib/prismaClient";
 import { auth } from "@clerk/nextjs/server";
 import { CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+
+export const metadata = {
+  title: "SyncPoint - Meetings",
+  description:
+    "SyncPoint is a Calendly clone built with Next.js, Clerk, Prisma and Tailwind CSS.",
+};
 
 async function MeetingsPage() {
   const { userId, redirectToSignIn } = await auth();
@@ -15,14 +20,14 @@ async function MeetingsPage() {
     return redirectToSignIn();
   }
 
-  const schedulesData = await prismaDB.meeting.findFirst({
+  const meetingsData = await prismaDB.meeting.findMany({
     where: { userClerkId: userId },
     orderBy: {
-      createdAt: "desc",
+      startTime: "asc",
       //TODO sort by startTime from schedule
     },
   });
-  console.log("🚀 ~ MeetingsPage ~ schedulesData:", schedulesData);
+
   return (
     <GridContainer>
       <div className="flex justify-between">
@@ -33,15 +38,9 @@ async function MeetingsPage() {
           </Link>
         </Button>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl">Schedule</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {/* FORM */}
-          <SchedulesForm />
-        </CardContent>
-      </Card>
+      <div className="w-full h-px bg-muted-foreground my-4"></div>
+
+      <MeetingsList meetingsData={meetingsData} />
     </GridContainer>
   );
 }

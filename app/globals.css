@@ -165,3 +165,11 @@
     @apply text-base font-semibold;
   }
 }
+
+.rdp-selected .rdp-day_button {
+  border: none !important;
+}
+
+.rdp-chevron {
+  fill: rgb(33, 123, 46) !important;
+}

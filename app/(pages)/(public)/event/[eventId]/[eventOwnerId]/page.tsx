@@ -42,28 +42,26 @@ async function EventPage({
   const eventOwnerId = (await params).eventOwnerId;
 
   if (!userId || !eventId || !eventOwnerId) {
-    console.log("first");
     return notFound();
   }
 
   const { data, error } = await getEventAvailability(eventId, eventOwnerId);
 
-  if (!data?.slots || !data?.event) {
-    console.log("first");
+  if (!data?.event) {
     return notFound();
   }
 
-  if (!data.slots) return notFound();
   return (
     <GridContainer>
       <div className="flex justify-between bg-muted py-4 px-6">
         <EventDetails
-          availableDays={data.slots}
+          availableDays={data.slots || []}
           error={error}
           event={data.event}
         />
+
         <BookingForm
-          availableDays={data.slots}
+          availableDays={data.slots || []}
           error={error}
           event={data.event}
         />

@@ -96,8 +96,8 @@ export async function updateAvailability(data: AvailabilitySchemaType) {
         {
           day: data[0].toUpperCase() as DayOfWeekUpperCase,
           //THIS IS DEFAULT DATE,  when users will book a meeting, we will just update the start time and end time to what date user selected
-          startTime: `${currentDateString}T${data[1].startTime}:00.000Z`, //
-          endTime: `${currentDateString}T${data[1].endTime}:00.000Z`,
+          startTime: `${currentDateString}T${data[1].startTime}:00Z`, //
+          endTime: `${currentDateString}T${data[1].endTime}:00Z`,
         },
       ];
     } else {

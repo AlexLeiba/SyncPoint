@@ -6,6 +6,13 @@ import { CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+export async function generateMetadata() {
+  return {
+    title: "Availability",
+    description: "The availability for your meetings",
+  };
+}
+
 async function AvailabilityPage() {
   const availabilityData = await getAvailability();
 

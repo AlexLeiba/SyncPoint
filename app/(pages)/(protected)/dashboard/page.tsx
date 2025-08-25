@@ -5,6 +5,12 @@ import { CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+export const metadata = {
+  title: "SyncPoint - Dashboard",
+  description:
+    "SyncPoint is a Calendly clone built with Next.js, Clerk, Prisma and Tailwind CSS.",
+};
+
 async function DashboardPage() {
   return (
     <GridContainer>
