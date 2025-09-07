@@ -32,7 +32,7 @@ async function MyBookedMeetingsPage() {
     <GridContainer>
       <div className="flex justify-between">
         <h2 className="gradient-title">My Booked Meetings</h2>
-        <Button asChild size={"lg"}>
+        <Button asChild size={"lg"} variant={"primary"}>
           <Link href="/events/new-event">
             <CalendarPlus /> New Event
           </Link>

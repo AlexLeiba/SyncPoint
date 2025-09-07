@@ -20,7 +20,7 @@ async function AvailabilityPage() {
     <GridContainer>
       <div className="flex justify-between">
         <h2 className="gradient-title">Availability</h2>
-        <Button asChild size={"lg"}>
+        <Button asChild size={"lg"} variant={"primary"}>
           <Link href="/events/new-event">
             <CalendarPlus /> New Event
           </Link>
