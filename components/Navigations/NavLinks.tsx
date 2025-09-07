@@ -8,7 +8,6 @@ import React from "react";
 export function NavLinks() {
   const pathname = usePathname();
 
-  function handleNavigate() {}
   return (
     <div>
       <div className="flex gap-8 flex-col ">

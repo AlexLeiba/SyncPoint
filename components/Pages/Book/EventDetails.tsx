@@ -1,21 +1,16 @@
 "use client";
 import { Event } from "@/app/generated/prisma";
 import { formatDurationInMinutes } from "@/lib/formatDurationInMinutes";
-import { DataSlotsType } from "@/server-actions/booking";
+
 import { Calendar, Clock } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import toast from "react-hot-toast";
-
-import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 
 type Props = {
-  availableDays: DataSlotsType;
-  error: boolean;
   event: Event;
 };
-export function EventDetails({ availableDays, event, error }: Props) {
+export function EventDetails({ event }: Props) {
   return (
     <div className="flex justify-center items-center h-full">
       <div>

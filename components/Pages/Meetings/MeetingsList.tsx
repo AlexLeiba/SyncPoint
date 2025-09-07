@@ -13,11 +13,7 @@ import { Calendar, Clock, Video } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  deleteMeeting,
-  getBookedMeetingsData,
-  getEventMettingsData,
-} from "@/server-actions/meetings";
+import { deleteMeeting, getEventMettingsData } from "@/server-actions/meetings";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { parseIsoDateInLocalHoursAndMinutes } from "@/lib/formatDurationInMinutes";
@@ -33,11 +29,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { prismaDB } from "@/lib/prismaClient";
-import { useUser } from "@clerk/nextjs";
 
 export function MeetingsList({ meetingsData }: { meetingsData: Meeting[] }) {
-  const { user } = useUser();
   const [tab, setTab] = useState("upcoming");
   const [meetData, setMeetData] = useState(meetingsData);
 

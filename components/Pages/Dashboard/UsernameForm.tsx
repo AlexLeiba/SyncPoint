@@ -1,8 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { usernameSchema, UsernameSchemaType } from "@/lib/zodSchemas";
-import { updateUsername } from "@/server-actions/dashboard";
 import { useUser } from "@clerk/clerk-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
@@ -18,12 +16,12 @@ export function UsernameForm() {
     },
   });
 
-  async function onSubmit(data: UsernameSchemaType) {
-    console.log("first", data);
-
-    const dataa = await updateUsername(data.username);
-    console.log("🚀 ~ onSubmit ~ dataa:", dataa);
-  }
+  //   async function onSubmit(data: UsernameSchemaType) {
+  //     console.log("first", data);
+  //
+  //     const dataa = await updateUsername(data.username);
+  //     console.log("🚀 ~ onSubmit ~ dataa:", dataa);
+  //   }
 
   useEffect(() => {
     formMethods.setValue("username", user?.username || "");

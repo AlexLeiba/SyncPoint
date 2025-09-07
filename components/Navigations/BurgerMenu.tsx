@@ -1,9 +1,8 @@
 "use client";
+import React from "react";
 import { LINKS } from "@/consts";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useReducer } from "react";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
 

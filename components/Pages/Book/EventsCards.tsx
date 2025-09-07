@@ -3,12 +3,10 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import React from "react";
-// import { CopyEventLink } from "../Events/CopyEventLink";
 import { formatDurationInMinutes } from "@/lib/formatDurationInMinutes";
 import Link from "next/link";
 
