@@ -50,12 +50,18 @@ function UserData({
 
             <div>
               <CardTitle className="mb-2">
-                Upcoming event meetings:{" "}
-                {eventMeetingsData.data?.[0]?.startTime ? (
-                  eventMeetingsData.data?.[0]?.startTime.toLocaleString()
-                ) : (
-                  <i>No event meetings was found</i>
-                )}
+                <p className="text-lg">
+                  Upcoming event meeting:{" "}
+                  {eventMeetingsData.data?.[0]?.startTime ? (
+                    eventMeetingsData.data?.[0]?.startTime
+                      .toString()
+                      .slice(0, 10)
+                  ) : (
+                    <span className="text-base font-light">
+                      No event meeting was found.
+                    </span>
+                  )}
+                </p>
               </CardTitle>
 
               {eventMeetingsData.data?.[0]?.startTime && (
@@ -92,13 +98,19 @@ function UserData({
 
             <div>
               <div>
-                <CardTitle className="mb-2">
-                  Upcoming booked meeting:{" "}
-                  {bookedMeetingsData.data?.[0]?.startTime ? (
-                    bookedMeetingsData.data?.[0]?.startTime.toLocaleString()
-                  ) : (
-                    <i>No booked meetings was found</i>
-                  )}
+                <CardTitle className="mb-2 w-full">
+                  <p className="text-lg">
+                    Upcoming booked meeting:{" "}
+                    {bookedMeetingsData.data?.[0]?.startTime ? (
+                      bookedMeetingsData.data?.[0]?.startTime
+                        .toString()
+                        .slice(0, 10)
+                    ) : (
+                      <span className="text-base font-light">
+                        No booked meeting was found.
+                      </span>
+                    )}
+                  </p>
                 </CardTitle>
 
                 {bookedMeetingsData.data?.[0]?.startTime && (

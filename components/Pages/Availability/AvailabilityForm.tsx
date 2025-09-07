@@ -42,7 +42,10 @@ export function AvailabilityForm(initialData: AvailabilitySchemaType) {
         >
           {DAYS_OF_WEEK.map((day) => {
             return (
-              <div key={day} className="flex gap-12 items-center h-full">
+              <div
+                key={day}
+                className="flex md:gap-8 gap-4 items-center h-full"
+              >
                 <div className="flex items-center gap-4">
                   <FormField
                     control={formMethods.control}
@@ -85,6 +88,7 @@ export function AvailabilityForm(initialData: AvailabilitySchemaType) {
               render={({ field }) => {
                 return (
                   <Input
+                    className="w-[100px]"
                     type="number"
                     value={field.value as unknown as string}
                     onChange={(e) => {

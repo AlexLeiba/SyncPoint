@@ -37,7 +37,7 @@ export function StartEndInputs({ day }: { day: string }) {
                 onValueChange={field.onChange}
                 defaultValue={field.value as unknown as string}
               >
-                <SelectTrigger className="w-[120px] cursor-pointer">
+                <SelectTrigger className="w-[100px] cursor-pointer">
                   <SelectValue placeholder="Start time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -68,7 +68,7 @@ export function StartEndInputs({ day }: { day: string }) {
               >
                 <SelectTrigger
                   className={cn(
-                    "w-[120px] cursor-pointer",
+                    "w-[100px] cursor-pointer",
                     (errors["endTime" + "-" + day]?.message as string) &&
                       "border-2 border-red-600"
                   )}
