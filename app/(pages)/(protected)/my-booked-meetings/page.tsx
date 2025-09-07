@@ -1,5 +1,5 @@
 import GridContainer from "@/components/Grid/GridContainer";
-import { MeetingsList } from "@/components/Pages/Meetings/MeetingsList";
+import { MyBookedMeetingsList } from "@/components/Pages/Meetings/MyBookedMeetingsList";
 import { Button } from "@/components/ui/button";
 import { prismaDB } from "@/lib/prismaClient";
 import { auth } from "@clerk/nextjs/server";
@@ -8,12 +8,12 @@ import Link from "next/link";
 import React from "react";
 
 export const metadata = {
-  title: "SyncPoint - Meetings",
+  title: "SyncPoint - Booked Meetings",
   description:
     "SyncPoint is a Calendly clone built with Next.js, Clerk, Prisma and Tailwind CSS.",
 };
 
-async function MeetingsPage() {
+async function MyBookedMeetingsPage() {
   const { userId, redirectToSignIn } = await auth();
 
   if (!userId) {
@@ -21,7 +21,7 @@ async function MeetingsPage() {
   }
 
   const meetingsData = await prismaDB.meeting.findMany({
-    where: { userClerkId: userId }, //the owner of the event
+    where: { bookedClerkId: userId }, // the user who booked the meeting
     orderBy: {
       startTime: "asc",
       //TODO sort by startTime from schedule
@@ -31,7 +31,7 @@ async function MeetingsPage() {
   return (
     <GridContainer>
       <div className="flex justify-between">
-        <h2 className="gradient-title">My Event Meetings</h2>
+        <h2 className="gradient-title">My Booked Meetings</h2>
         <Button asChild size={"lg"}>
           <Link href="/events/new-event">
             <CalendarPlus /> New Event
@@ -40,9 +40,9 @@ async function MeetingsPage() {
       </div>
       <div className="w-full h-px bg-muted-foreground my-4"></div>
 
-      <MeetingsList meetingsData={meetingsData} />
+      <MyBookedMeetingsList meetingsData={meetingsData} />
     </GridContainer>
   );
 }
 
-export default MeetingsPage;
+export default MyBookedMeetingsPage;

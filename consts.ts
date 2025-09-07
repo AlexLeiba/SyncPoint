@@ -1,9 +1,20 @@
-import { Calendar, Clock, LayoutDashboard, Users } from "lucide-react";
+import {
+  CalendarCheck,
+  CalendarClock,
+  CalendarDays,
+  Clock,
+  LayoutDashboard,
+} from "lucide-react";
 
 export const LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/events", label: "Events", icon: Calendar },
-  { href: "/meetings", label: "Meetings", icon: Users },
+  { href: "/events", label: "Events", icon: CalendarDays },
+  { href: "/meetings", label: "My Event Meetings", icon: CalendarCheck },
+  {
+    href: "/my-booked-meetings",
+    label: "My Booked Meetings",
+    icon: CalendarClock,
+  },
   { href: "/availability", label: "Availability", icon: Clock },
 ];
 

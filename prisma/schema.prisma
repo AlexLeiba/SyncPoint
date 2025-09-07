@@ -62,7 +62,11 @@ model Meeting {
   id String @id @default(uuid())
   eventId String @default(uuid())
 
-  userClerkId String
+  userClerkId String //owner of event
+  userClerkEmail String //owner of event
+  userClerkName String //owner of event
+
+  bookedClerkId String //who booked a meeting
 
   name String
   email String

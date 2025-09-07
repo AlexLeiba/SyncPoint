@@ -3,19 +3,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@clerk/nextjs";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, CopyCheck } from "lucide-react";
+import { Clock, Copy, CopyCheck, Video } from "lucide-react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { Meeting } from "@/app/generated/prisma";
+import { formatUniqueBookingLink } from "@/lib/formatUniqueBookingLink";
+import { parseIsoDateInLocalHoursAndMinutes } from "@/lib/formatDurationInMinutes";
 
-function UserData() {
+function UserData({
+  eventMeetingsData,
+  bookedMeetingsData,
+}: {
+  eventMeetingsData: { data: Meeting[] | null; error: boolean };
+  bookedMeetingsData: { data: Meeting[] | null; error: boolean };
+}) {
   const { user } = useUser();
 
   const [copy, setCopy] = useState(false);
 
-  const bookingLink = user
-    ? `${location.origin}/book/${user?.fullName?.trim().replace(" ", "-")}/${
-        user?.id
-      }`
-    : "";
+  if (eventMeetingsData.error || bookedMeetingsData.error) {
+    return toast.error("Failed to get meeting data. Please try again.");
+  }
+
+  const bookingLink = formatUniqueBookingLink({
+    fullName: user?.fullName,
+    id: user?.id,
+  });
 
   function handleCopyLink() {
     window?.navigator.clipboard.writeText(bookingLink).then(() => {
@@ -30,7 +43,96 @@ function UserData() {
     <div className="grid grid-cols-1 gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>Welcome, {user?.fullName}</CardTitle>
+          <div className="flex flex-col gap-4">
+            <CardTitle className="text-2xl mb-4">
+              Welcome, {user?.fullName}
+            </CardTitle>
+
+            <div>
+              <CardTitle className="mb-2">
+                Upcoming event meetings:{" "}
+                {eventMeetingsData.data?.[0]?.startTime ? (
+                  eventMeetingsData.data?.[0]?.startTime.toLocaleString()
+                ) : (
+                  <i>No event meetings was found</i>
+                )}
+              </CardTitle>
+
+              {eventMeetingsData.data?.[0]?.startTime && (
+                <div>
+                  <div className="flex gap-3 items-center">
+                    <Clock size={18} color="gray" />
+                    <div className="flex items-center gap-1">
+                      <p>
+                        {parseIsoDateInLocalHoursAndMinutes(
+                          eventMeetingsData.data?.[0]?.startTime.toISOString()
+                        )}
+                      </p>
+                      <p>-</p>
+                      <p>
+                        {parseIsoDateInLocalHoursAndMinutes(
+                          eventMeetingsData.data?.[0]?.endTime.toISOString()
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 items-center">
+                    <Video size={18} color="gray" />
+
+                    <Link
+                      href={eventMeetingsData.data?.[0]?.meetLink || ""}
+                      target="_blank"
+                    >
+                      <p className="text-md text-green-500">Join Meeting</p>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div>
+                <CardTitle className="mb-2">
+                  Upcoming booked meeting:{" "}
+                  {bookedMeetingsData.data?.[0]?.startTime ? (
+                    bookedMeetingsData.data?.[0]?.startTime.toLocaleString()
+                  ) : (
+                    <i>No booked meetings was found</i>
+                  )}
+                </CardTitle>
+
+                {bookedMeetingsData.data?.[0]?.startTime && (
+                  <div>
+                    <div className="flex gap-3 items-center">
+                      <Clock size={18} color="gray" />
+                      <div className="flex items-center gap-1">
+                        <p>
+                          {parseIsoDateInLocalHoursAndMinutes(
+                            bookedMeetingsData.data?.[0]?.startTime.toISOString()
+                          )}
+                        </p>
+                        <p>-</p>
+                        <p>
+                          {parseIsoDateInLocalHoursAndMinutes(
+                            bookedMeetingsData.data?.[0]?.endTime.toISOString()
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 items-center">
+                      <Video size={18} color="gray" />
+                      <Link
+                        href={bookedMeetingsData.data?.[0]?.meetLink || ""}
+                        target="_blank"
+                      >
+                        <p className="text-md text-green-500">Join Meeting</p>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </CardHeader>
 
         {/* TODO: latest updates */}
@@ -38,12 +140,12 @@ function UserData() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Your unique link</CardTitle>
+          <CardTitle className="text-2xl">Your unique booking link</CardTitle>
         </CardHeader>
 
-        <CardContent>
-          <div className="flex gap-2 items-center justify-between">
-            <div className="flex items-center gap-2">
+        <CardContent className="overflow-hidden">
+          <div className="flex gap-2 md:items-center md:justify-between md:flex-row flex-col items-start w-full">
+            <div>
               <p>{bookingLink}</p>
             </div>
 

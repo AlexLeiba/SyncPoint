@@ -14,7 +14,9 @@ export function CopyEventLink({ eventId, userId, disabled }: Props) {
 
   function handleCopyLink() {
     window.navigator.clipboard
-      .writeText(`${location.origin}/book/${userId}/${eventId}`)
+      .writeText(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/event/${eventId}/${userId}`
+      )
       .then(() => {
         setCopied(eventId);
         toast.success("Event link copied!");

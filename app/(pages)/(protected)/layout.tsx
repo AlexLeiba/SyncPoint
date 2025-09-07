@@ -6,7 +6,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     <>
       <SideBar />
 
-      <main className="overflow-y-auto h-screen">{children}</main>
+      <main className="overflow-y-auto h-full">{children}</main>
     </>
   );
 }

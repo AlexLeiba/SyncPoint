@@ -30,7 +30,7 @@ export function UserData({
 
         <h4>{userFullName}</h4>
 
-        <p className="text-xl text-muted-foreground">
+        <p className="text-xl text-muted-foreground text-center">
           Welcome to my bookings page, Please select an event below to book a
           call
         </p>

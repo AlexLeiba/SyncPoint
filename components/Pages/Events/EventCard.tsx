@@ -42,16 +42,24 @@ function EventCard({
           </CardDescription>
         </CardContent>
       )}
-      <CardFooter className="flex justify-end gap-2">
-        {/* COPY EVENT LINK */}
-        <CopyEventLink disabled={!isActive} eventId={id} userId={userClerkId} />
+      <CardFooter>
+        <div className="flex  justify-end items-end  h-[80px] w-full">
+          {/* COPY EVENT LINK */}
+          <div className="flex gap-2">
+            <CopyEventLink
+              disabled={!isActive}
+              eventId={id}
+              userId={userClerkId}
+            />
 
-        {/* EDIT EVENT */}
-        <Button variant={"ghost"} size={"lg"} asChild>
-          <Link href={`/events/edit-event/${id}`} title="Edit Event">
-            <SquarePen className="text-foreground size-5 " />
-          </Link>
-        </Button>
+            {/* EDIT EVENT */}
+            <Button variant={"ghost"} size={"lg"} asChild>
+              <Link href={`/events/edit-event/${id}`} title="Edit Event">
+                <SquarePen className="text-foreground size-5 " />
+              </Link>
+            </Button>
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );

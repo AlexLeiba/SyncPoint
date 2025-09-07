@@ -16,12 +16,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   deleteMeeting,
   getBookedMeetingsData,
-  getEventMettingsData,
 } from "@/server-actions/meetings";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { parseIsoDateInLocalHoursAndMinutes } from "@/lib/formatDurationInMinutes";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,18 +31,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { prismaDB } from "@/lib/prismaClient";
-import { useUser } from "@clerk/nextjs";
 
-export function MeetingsList({ meetingsData }: { meetingsData: Meeting[] }) {
-  const { user } = useUser();
+export function MyBookedMeetingsList({
+  meetingsData,
+}: {
+  meetingsData: Meeting[];
+}) {
   const [tab, setTab] = useState("upcoming");
   const [meetData, setMeetData] = useState(meetingsData);
 
   async function handleTabs(tabType: "upcoming" | "previous") {
     setTab(tabType);
 
-    const response = await getEventMettingsData(tabType);
+    const response = await getBookedMeetingsData(tabType);
 
     if (response.error) {
       return toast.error("Failed to get meeting data. Please try again.");
@@ -64,15 +63,16 @@ export function MeetingsList({ meetingsData }: { meetingsData: Meeting[] }) {
       return toast.error("Failed to delete meeting. Please try again.");
     }
 
-    const responseNewMeetingsData = await getEventMettingsData("upcoming");
+    const responseNewMeetingsData = await getBookedMeetingsData("upcoming");
 
     if (responseNewMeetingsData.error) {
       return toast.error("Failed to get meeting data. Please try again.");
     }
 
     toast.success("Meeting deleted successfully!");
+
     setMeetData(responseNewMeetingsData.data as Meeting[]);
-  }
+  } //TODO delete meeting, using googleMeetId
   return (
     <div>
       <Tabs defaultValue="upcoming" className="w-[400px] py-4">
@@ -102,14 +102,18 @@ export function MeetingsList({ meetingsData }: { meetingsData: Meeting[] }) {
               <Card key={meet.id}>
                 <CardHeader>
                   <CardTitle className="text-2xl">1:1 Discussion</CardTitle>
-                  <CardDescription className="text-lg text-foreground">
-                    with {meet.name}
+                  <CardDescription className="text-lg text-foreground line-clamp-1">
+                    with {meet.userClerkName}
                   </CardDescription>
-                  {meet.email && (
-                    <CardDescription>{meet.email}</CardDescription>
+                  {meet.userClerkEmail && (
+                    <CardDescription className="line-clamp-2">
+                      {meet.userClerkEmail}
+                    </CardDescription>
                   )}
                   {meet.additionalInfo && (
-                    <CardDescription>{meet.additionalInfo}</CardDescription>
+                    <CardDescription className="line-clamp-3">
+                      {meet.additionalInfo}
+                    </CardDescription>
                   )}
                 </CardHeader>
                 <CardContent>
@@ -141,7 +145,7 @@ export function MeetingsList({ meetingsData }: { meetingsData: Meeting[] }) {
                   </div>
                 </CardContent>
                 <CardFooter className="h-full">
-                  <div className="flex justify-end items-end h-full w-full">
+                  <div className="flex justify-end items-end w-full h-full">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant={"destructive"}>Cancel Meeting</Button>

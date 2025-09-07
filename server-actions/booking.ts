@@ -205,7 +205,11 @@ export type BookAMeetingType = {
   email: string;
   additionalInfo: string;
   eventId: string;
+  duration: number;
+
   clerkUserId: string;
+  userClerkEmail: string;
+  userClerkName: string;
 };
 export async function bookAMeeting(bookData: BookAMeetingType) {
   const { userId } = await auth(); //for userClerkId
@@ -250,6 +254,9 @@ export async function bookAMeeting(bookData: BookAMeetingType) {
       auth: oAuth2Client,
       calendarId: "primary",
       conferenceDataVersion: 1,
+      sendNotifications: true,
+      supportsAttachments: true,
+      sendUpdates: "all",
 
       requestBody: {
         //the body of the event saved in goole calendar
@@ -292,10 +299,15 @@ export async function bookAMeeting(bookData: BookAMeetingType) {
       data: {
         startTime: bookData.startTime,
         endTime: bookData.endTime,
-        userClerkId: bookData.clerkUserId, //user who created the booking
-        name: bookData.name,
-        email: bookData.email,
+        userClerkId: bookData.clerkUserId, //owner of event
+        userClerkEmail: bookData.userClerkEmail, //owner of event
+        userClerkName: bookData.userClerkName, //owner of event
+
+        bookedClerkId: userId, //user who booked
+        name: bookData.name, //user who booked
+        email: bookData.email, //user who booked
         additionalInfo: bookData.additionalInfo ? bookData.additionalInfo : "",
+
         eventId: bookData.eventId,
         meetLink: meetLink, //to get the meeting when is
         googleEventId: googleEventId,

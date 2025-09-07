@@ -36,7 +36,7 @@ export function SideBar() {
       ref={sidebarRef}
       className={cn(
         "pt-2 ",
-        open ? "w-[200px]" : "w-[50px]",
+        open ? "w-[250px]" : "w-[50px]",
         "fixed left-0 top-[61px] bottom-0 bg-secondary  z-10 transition-all ease-in-out duration-100 hidden md:block"
       )}
     >

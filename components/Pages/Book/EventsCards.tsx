@@ -16,7 +16,7 @@ type Props = { events: Event[] };
 export function EventsCards({ events }: Props) {
   if (events.length === 0) return <div>No events found</div>;
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid md:grid-cols-3 grid-cols-1  gap-4">
       {events.map((event) => {
         return (
           <Link
@@ -46,14 +46,6 @@ export function EventsCards({ events }: Props) {
                   </CardDescription>
                 </CardContent>
               )}
-              <CardFooter className="flex justify-end gap-2">
-                {/* COPY EVENT LINK */}
-                {/* <CopyEventLink
-                eventId={event.id}
-                userId={event.userClerkId}
-                disabled={false}
-              /> */}
-              </CardFooter>
             </Card>
           </Link>
         );

@@ -79,6 +79,9 @@ export function BookingForm({ availableDays, event, error }: Props) {
       email: data.email,
       eventId: event.id,
       clerkUserId: event.userClerkId,
+      userClerkEmail: event.userEmail,
+      userClerkName: event.userFullName,
+      duration: event.durationInMinutes,
     };
 
     const response = await bookAMeeting(bookData);
