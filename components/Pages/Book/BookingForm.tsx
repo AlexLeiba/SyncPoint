@@ -38,6 +38,17 @@ export function BookingForm({ availableDays, event, error }: Props) {
     toast.error("Failed to load event. Please try again.");
   }
 
+  useEffect(() => {
+    // Filter slots according to Selected Day of the current Date
+    if (selectedDay) {
+      const filteredSlots = availableDays.filter((dayData) => {
+        return dayData.date === format(selectedDay, "yyyy-MM-dd");
+      });
+
+      setSlots(filteredSlots[0]?.slots || []);
+    }
+  }, [selectedDay, availableDays]);
+
   const formMethods = useForm<MeetingSchemaType>({
     resolver: zodResolver(meetingSchema),
     defaultValues: {},
@@ -54,9 +65,8 @@ export function BookingForm({ availableDays, event, error }: Props) {
   async function onSubmit(data: MeetingSchemaType) {
     setLoading(true);
     toast.loading("Booking a meeting...", { id: "booking" });
-    console.log("data SUBMIT", data);
 
-    const startTime = `${data.date}T${data.time}:00.000Z`;
+    const startTime = `${data.date}T${data.time}`;
 
     const endTime =
       new Date(startTime).getTime() + event.durationInMinutes * 60 * 1000;
@@ -94,17 +104,6 @@ export function BookingForm({ availableDays, event, error }: Props) {
     reset();
     setSelectedDay(day);
   }
-
-  useEffect(() => {
-    if (selectedDay) {
-      const filteredSlots = availableDays.filter((day) => {
-        return day.date === format(selectedDay, "yyyy-MM-dd");
-      });
-      console.log("🚀 ~ BookingForm ~ filteredSlots:", filteredSlots);
-
-      setSlots(filteredSlots[0]?.slots || []);
-    }
-  }, [selectedDay, availableDays]);
 
   function handleSelectTimeSlot(startTime: string) {
     if (selectedDay) {
@@ -151,6 +150,11 @@ export function BookingForm({ availableDays, event, error }: Props) {
       <div className="flex gap-4  ">
         <div>
           <DayPicker
+            onMonthChange={handleMonthChange}
+            month={selectedMonth}
+            onSelect={handleSelectDay}
+            selected={selectedDay}
+            defaultMonth={selectedMonth}
             className="rdp-day_button-[border:none]"
             disabled={[
               {
@@ -159,12 +163,7 @@ export function BookingForm({ availableDays, event, error }: Props) {
               },
             ]}
             animate
-            defaultMonth={selectedMonth}
-            month={selectedMonth}
-            onMonthChange={handleMonthChange}
             mode="single"
-            selected={selectedDay}
-            onSelect={handleSelectDay}
             modifiers={{
               available: availableDays?.map((day) => new Date(day.date)), //inside modifiers : is as if defined a variable ('available' in this case) with which we can tell what cells to highlight. ITS added to a day when 'day' matches specific conditions.
               selected: selectedDay ? [selectedDay] : [],

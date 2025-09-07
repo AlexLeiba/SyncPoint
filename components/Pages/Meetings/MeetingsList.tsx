@@ -16,9 +16,9 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMettingsData } from "@/server-actions/meetings";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
+import { parseIsoDateInLocalHoursAndMinutes } from "@/lib/formatDurationInMinutes";
 
 export function MeetingsList({ meetingsData }: { meetingsData: Meeting[] }) {
-  console.log("🚀 ~ MeetingsList ~ meetingsData:", meetingsData);
   const [tab, setTab] = useState("upcoming");
   const [meetData, setMeetData] = useState(meetingsData);
 
@@ -85,9 +85,17 @@ export function MeetingsList({ meetingsData }: { meetingsData: Meeting[] }) {
                   <div className="flex gap-3 items-center">
                     <Clock size={18} />
                     <div className="flex items-center gap-1">
-                      <p>{format(new Date(meet.startTime), "HH:mm a")}</p>
+                      <p>
+                        {parseIsoDateInLocalHoursAndMinutes(
+                          meet.startTime.toISOString()
+                        )}
+                      </p>
                       <p>-</p>
-                      <p>{format(new Date(meet.startTime), "HH:mm a")}</p>
+                      <p>
+                        {parseIsoDateInLocalHoursAndMinutes(
+                          meet.endTime.toISOString()
+                        )}
+                      </p>
                     </div>
                   </div>
                   <div className="flex gap-3 items-center">

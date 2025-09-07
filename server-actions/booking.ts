@@ -1,9 +1,7 @@
 "use server";
-
 import { Meeting } from "@/app/generated/prisma";
 import { prismaDB } from "@/lib/prismaClient";
 import { auth } from "@clerk/nextjs/server";
-
 import type { Event as PrismaEvent } from "@/app/generated/prisma";
 import { DayOfWeekUpperCase } from "@/consts";
 import {
@@ -21,6 +19,7 @@ export type DataSlotsType = {
   date: string;
   slots: string[];
 }[];
+
 export async function getEventAvailability(
   eventId: string,
   eventOwnerId: string

@@ -11,3 +11,22 @@ export function formatDurationInMinutes(durationInMinutes: number) {
 
   return `${hoursString} ${minutesString}`;
 }
+
+export function parseDateInISOString(isoTimeString: Date) {
+  const isoDate = new Date(isoTimeString).toISOString();
+  const isoTime = isoDate.slice(11, 16);
+  return isoTime;
+}
+
+export function parseIsoDateInLocalHoursAndMinutes(
+  isoTimeString: string | undefined
+) {
+  if (!isoTimeString) return "";
+  const hours = new Date(isoTimeString).getHours();
+  const minutes = new Date(isoTimeString).getMinutes();
+  const time = `${hours < 10 ? "0" + hours : hours}:${
+    minutes < 10 ? "0" + minutes : minutes
+  }`;
+
+  return time;
+}

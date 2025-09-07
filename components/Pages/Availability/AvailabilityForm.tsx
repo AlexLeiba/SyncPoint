@@ -13,7 +13,6 @@ import { updateAvailability } from "@/server-actions/availability";
 import toast from "react-hot-toast";
 
 export function AvailabilityForm(initialData: AvailabilitySchemaType) {
-  console.log("🚀 ~ AvailabilityForm ~ initialData:", initialData);
   const formMethods = useForm<AvailabilitySchemaType>({
     resolver: zodResolver(availabilitySchema),
     defaultValues: { ...initialData },
@@ -21,8 +20,6 @@ export function AvailabilityForm(initialData: AvailabilitySchemaType) {
 
   async function onSubmit(data: AvailabilitySchemaType) {
     toast.loading("Updating availability...", { id: "availability" });
-
-    console.log("🚀 ~ onSubmit ~ data:", data);
 
     const response = await updateAvailability(data);
 

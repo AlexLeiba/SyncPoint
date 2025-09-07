@@ -5,6 +5,7 @@ import {
   DAYS_OF_WEEK,
   DEFAULT_AVAILABILITY,
 } from "@/consts";
+import { parseIsoDateInLocalHoursAndMinutes } from "@/lib/formatDurationInMinutes";
 import { prismaDB } from "@/lib/prismaClient";
 import { availabilitySchema, AvailabilitySchemaType } from "@/lib/zodSchemas";
 import { auth } from "@clerk/nextjs/server";
@@ -27,10 +28,6 @@ export async function getAvailability() {
       days: true,
     },
   });
-  console.log(
-    "🚀 ~ getAvailability SERVER   availabilityResponse:\n\n ",
-    availabilityResponse
-  );
 
   if (availabilityResponse.length === 0) {
     return {
@@ -52,10 +49,17 @@ export async function getAvailability() {
       (d) => d.day === dayOfWeek.toUpperCase()
     );
 
+    const startTime = parseIsoDateInLocalHoursAndMinutes(
+      dayAvailable?.startTime.toISOString()
+    );
+    const endTime = parseIsoDateInLocalHoursAndMinutes(
+      dayAvailable?.endTime.toISOString()
+    );
+
     availabilityData[dayOfWeek] = {
-      isAvailable: !!dayAvailable, //if exists is True Else is false
-      startTime: dayAvailable?.startTime.toISOString().slice(11, 16) || "09:00",
-      endTime: dayAvailable?.endTime.toISOString().slice(11, 16) || "17:00",
+      isAvailable: !!dayAvailable,
+      startTime: startTime || "09:00",
+      endTime: endTime || "17:00",
     };
   });
 
@@ -83,27 +87,35 @@ export async function updateAvailability(data: AvailabilitySchemaType) {
     };
   }
 
-  const currentDateString = new Date().toISOString().split("T")[0];
+  const currentDateStringWithoutTime = new Date().toISOString().split("T")[0]; //to save date in UTC on DB
 
-  const availabilityData = Object.entries(safeData.data).flatMap((data) => {
-    if (
-      typeof data[1] === "object" &&
-      data[1] !== null &&
-      typeof data[1].isAvailable === "boolean" &&
-      data[1].isAvailable
-    ) {
-      return [
-        {
-          day: data[0].toUpperCase() as DayOfWeekUpperCase,
-          //THIS IS DEFAULT DATE,  when users will book a meeting, we will just update the start time and end time to what date user selected
-          startTime: `${currentDateString}T${data[1].startTime}:00Z`, //
-          endTime: `${currentDateString}T${data[1].endTime}:00Z`,
-        },
-      ];
-    } else {
-      return [];
+  const availabilityData = Object.entries(safeData.data).flatMap(
+    (dataArray) => {
+      if (
+        typeof dataArray[1] === "object" &&
+        dataArray[1] !== null &&
+        typeof dataArray[1].isAvailable === "boolean" &&
+        dataArray[1].isAvailable //if object with startTime endTime is available (is checked), is object, is not null then add it to Request
+      ) {
+        const startTimeString = `${currentDateStringWithoutTime}T${dataArray[1].startTime}`;
+        const endTimeString = `${currentDateStringWithoutTime}T${dataArray[1].endTime}`;
+
+        const startTimeToUTC = new Date(startTimeString).toISOString();
+        const endTimeToUTC = new Date(endTimeString).toISOString();
+        //parse to ISO string before to send to DB , to store it as UTC
+        return [
+          {
+            day: dataArray[0].toUpperCase() as DayOfWeekUpperCase,
+            //THIS IS DEFAULT DATE,  when users will book a meeting, we will just update the start time and end time to what date user selected
+            startTime: `${startTimeToUTC}`, //
+            endTime: `${endTimeToUTC}`,
+          },
+        ];
+      } else {
+        return [];
+      }
     }
-  });
+  );
 
   const availabilityResponseData = await prismaDB.availability.findMany({
     where: {

@@ -10,18 +10,17 @@ import React from "react";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ eventId: string }>;
+  params: Promise<{ eventId: string; eventOwnerId: string }>;
 }) {
-  const { userId } = await auth();
-
   const eventId = (await params).eventId;
+  const eventOwnerId = (await params).eventOwnerId;
 
-  if (!userId || !eventId) return notFound();
+  if (!eventOwnerId || !eventId) return notFound();
 
   const eventData = await prismaDB.event.findUnique({
     where: {
       id: eventId,
-      userClerkId: userId,
+      userClerkId: eventOwnerId,
     },
   });
 
