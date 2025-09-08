@@ -14,7 +14,7 @@ export default async function Home() {
   }
   return (
     <GridContainer>
-      <div className="grid grid-cols-2 items-center">
+      <div className="grid md:grid-cols-2 grid-cols-1 items-center">
         <div className="flex  flex-col gap-4">
           <h1 className=" gradient-title ">Welcome to SyncPoint</h1>
           <p className="text-lg">Your all-in-one google scheduling solution.</p>
