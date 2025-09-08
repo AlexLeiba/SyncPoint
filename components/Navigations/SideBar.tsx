@@ -1,12 +1,13 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Settings } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Spacer } from "../ui/spacer";
 import Link from "next/link";
 import { LINKS } from "@/consts";
 import { usePathname } from "next/navigation";
+import { UserButton } from "@clerk/nextjs";
 
 export function SideBar() {
   const [open, setOpen] = useState(false);
@@ -55,7 +56,7 @@ export function SideBar() {
 
       <Spacer size={10} />
 
-      <nav>
+      <nav className="flex flex-col justify-between h-[calc(100%-100px)]">
         <ul className="flex gap-2 flex-col">
           {LINKS.map((link) => (
             <li key={link.href} title={link.label}>
@@ -91,6 +92,21 @@ export function SideBar() {
             </li>
           ))}
         </ul>
+
+        <div className="flex items-center gap-2  p-3 ">
+          <UserButton />
+          {open && (
+            <p
+              className={cn(
+                "text-foreground",
+
+                "text-lg"
+              )}
+            >
+              Settings
+            </p>
+          )}
+        </div>
       </nav>
     </aside>
   );
