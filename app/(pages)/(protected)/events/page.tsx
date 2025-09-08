@@ -24,7 +24,6 @@ async function EventsPage() {
   const events = await prismaDB.event.findMany({
     where: {
       userClerkId: userData.userId,
-      // isActive: true, TODO check where to keep all events which arent active
     },
     orderBy: {
       updatedAt: "desc",

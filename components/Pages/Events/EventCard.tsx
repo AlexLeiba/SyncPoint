@@ -42,8 +42,8 @@ function EventCard({
           </CardDescription>
         </CardContent>
       )}
-      <CardFooter>
-        <div className="flex  justify-end items-end  h-[80px] w-full">
+      <CardFooter className="h-full">
+        <div className="flex  justify-end items-end  h-full w-full">
           {/* COPY EVENT LINK */}
           <div className="flex gap-2">
             <CopyEventLink
