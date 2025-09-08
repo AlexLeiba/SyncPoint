@@ -21,7 +21,7 @@ function EventCard({
   data: Event;
 }) {
   return (
-    <Card className="flex flex-col h-64">
+    <Card className="flex flex-col min-h-32">
       <CardHeader>
         <CardTitle
           className={cn(

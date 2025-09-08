@@ -18,7 +18,7 @@ export function Header() {
 
   return (
     <header>
-      <nav className="w-full bg-accent fixed top-0 right-0 left-0 ">
+      <nav className="w-full bg-accent fixed top-0 right-0 left-0 z-50 ">
         <GridContainer spacerY={"small"}>
           <div className="flex justify-between items-center text-foreground ">
             <Logo />
