@@ -29,7 +29,6 @@ type Props = {
 export function BookingForm({ availableDays, event, error }: Props) {
   const [selectedDay, setSelectedDay] = useState<Date | undefined>();
   const [selectedMonth, setSelectedMonth] = useState<Date | undefined>();
-  // const [selectTime, setSelectedTime] = useState<string>("");
   const [slots, setSlots] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [bookedData, setBookedData] = useState<Meeting>();
@@ -124,7 +123,7 @@ export function BookingForm({ availableDays, event, error }: Props) {
 
   if (bookedData) {
     return (
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col justify-between md:mt-0 mt-4 gap-4">
         <div className="flex flex-col gap-2 items-center justify-center">
           <p className="text-2xl font-bold">Meeting Booked!</p>
           <p className="text-lg">Thank you for booking a meeting with us.</p>
@@ -132,7 +131,7 @@ export function BookingForm({ availableDays, event, error }: Props) {
             You will receive all informations on your email!
           </p>
 
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center flex-col">
             <p>Join the meeting:</p>
             <Link
               href={bookedData.meetLink}
@@ -149,8 +148,8 @@ export function BookingForm({ availableDays, event, error }: Props) {
   }
 
   return (
-    <div className="border-l border-gray-300 pl-6">
-      <div className="flex gap-4  ">
+    <div className="md:border-l border-gray-300 md:pl-6 md:mt-0 mt-4">
+      <div className="flex gap-4 md:flex-row flex-col ">
         <div>
           <DayPicker
             onMonthChange={handleMonthChange}

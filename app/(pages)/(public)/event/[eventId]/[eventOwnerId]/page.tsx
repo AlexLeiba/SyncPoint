@@ -52,7 +52,7 @@ async function EventPage({
 
   return (
     <GridContainer>
-      <div className="flex justify-between bg-muted py-4 px-6">
+      <div className="flex justify-between bg-muted py-4 px-6 md:flex-row flex-col">
         <EventDetails event={data.event} />
 
         <BookingForm
