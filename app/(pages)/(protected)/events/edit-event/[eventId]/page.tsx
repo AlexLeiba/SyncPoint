@@ -5,8 +5,12 @@ import { prismaDB } from "@/lib/prismaClient";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import React from "react";
 
-async function EditEventPage({ params }: { params: { eventId: string } }) {
-  const eventIdParam = await params.eventId;
+async function EditEventPage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const eventIdParam = (await params).eventId;
   if (!eventIdParam) {
     return <RedirectToSignIn />;
   }
@@ -14,7 +18,7 @@ async function EditEventPage({ params }: { params: { eventId: string } }) {
     where: { id: eventIdParam },
   });
   if (!eventData) return <RedirectToSignIn />;
-  // console.log("🚀 ~ EditEventPage ~ eventData:", eventData);
+
   return (
     <GridContainer>
       <Card>

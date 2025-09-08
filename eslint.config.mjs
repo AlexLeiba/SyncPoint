@@ -17,6 +17,13 @@ const eslintConfig = [
       "@typescript-eslint/no-unused-expressions": "off",
     },
   },
+  {
+    ignores: ["app/generated/**"],
+  },
+  {
+    files: ["**/*.{js,ts,jsx,tsx}"],
+    extends: ["next/core-web-vitals"],
+  },
 ];
 
 export default eslintConfig;

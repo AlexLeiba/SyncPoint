@@ -53,11 +53,7 @@ async function EventPage({
   return (
     <GridContainer>
       <div className="flex justify-between bg-muted py-4 px-6">
-        <EventDetails
-          availableDays={data.slots || []}
-          error={error}
-          event={data.event}
-        />
+        <EventDetails event={data.event} />
 
         <BookingForm
           availableDays={data.slots || []}
