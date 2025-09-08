@@ -123,7 +123,7 @@ export function BookingForm({ availableDays, event, error }: Props) {
 
   if (bookedData) {
     return (
-      <div className="flex flex-col justify-between md:mt-0 mt-4 gap-4">
+      <div className="flex flex-col justify-between md:mt-0 mt-4 gap-4 w-full">
         <div className="flex flex-col gap-2 items-center justify-center">
           <p className="text-2xl font-bold">Meeting Booked!</p>
           <p className="text-lg">Thank you for booking a meeting with us.</p>
