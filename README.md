@@ -1,3 +1,12 @@
+
+# Url: https://sync-point.vercel.app/
+
+## About project
+ SyncPoint is a full-stack Calendly like app which allows users to provide services and book appointments on Google Meet which is automatically generated link,  within the availability of the service provider.
+    All appointments will be added automatically in your google calendar and will notify you via email with all additional informations and Google Meet link.
+    It features: User authentication, Create and edit services, Book or cancel appointments, Sortings, Availability settings, Google calendar notification, Public and unique link for all events provided by the service provider, Automatically provided Google Meet link.
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
