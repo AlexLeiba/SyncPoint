@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["img.clerk.com"],
   },
+
+  serverExternalPackages: ["@prisma/client", "prisma"],
 };
 
 export default nextConfig;
