@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { deleteEvent, editEvent } from "@/server-actions/events";
 import { redirect } from "next/navigation";
-import { Event } from "@/app/generated/prisma";
+import { Event } from "@prisma/client";
 import {
   AlertDialog,
   AlertDialogCancel,

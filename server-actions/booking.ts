@@ -1,8 +1,8 @@
 "use server";
-import { Meeting } from "@/app/generated/prisma";
+import { Meeting } from "@prisma/client";
 import { prismaDB } from "@/lib/prismaClient";
 import { auth } from "@clerk/nextjs/server";
-import type { Event as PrismaEvent } from "@/app/generated/prisma";
+import type { Event as PrismaEvent } from "@prisma/client";
 import { DayOfWeekUpperCase } from "@/consts";
 import {
   addDays,

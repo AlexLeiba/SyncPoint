@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Meeting } from "@/app/generated/prisma";
+import { Meeting } from "@prisma/client";
 import { Calendar, Clock, Video } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";

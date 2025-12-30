@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, Copy, CopyCheck, Video } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { Meeting } from "@/app/generated/prisma";
+import { Meeting } from "@prisma/client";
 import { formatUniqueBookingLink } from "@/lib/formatUniqueBookingLink";
 import { parseIsoDateInLocalHoursAndMinutes } from "@/lib/formatDurationInMinutes";
 

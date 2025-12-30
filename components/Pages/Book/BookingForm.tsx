@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Event, Meeting } from "@/app/generated/prisma";
+import { Event, Meeting } from "@prisma/client";
 import { meetingSchema, type MeetingSchemaType } from "@/lib/zodSchemas";
 import {
   bookAMeeting,

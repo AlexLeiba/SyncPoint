@@ -1,4 +1,4 @@
-import { Event } from "@/app/generated/prisma";
+import { Event } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
